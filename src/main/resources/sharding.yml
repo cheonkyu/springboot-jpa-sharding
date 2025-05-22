@@ -1,0 +1,29 @@
+dataSources:
+  ds0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    jdbcUrl: jdbc:h2:mem:testdb;MODE=MYSQL
+    driverClassName: org.h2.Driver
+    username: sa
+  ds1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    jdbcUrl: jdbc:h2:mem:testdb1;MODE=MYSQL
+    driverClassName: org.h2.Driver
+    username: sa
+rules:
+  - !SHARDING
+    tables:
+      order:
+        actualDataNodes: ds${0..1}.order
+    defaultDatabaseStrategy:
+      standard:
+        shardingColumn: order_id
+        shardingAlgorithmName: database_inline
+    defaultTableStrategy:
+      none:
+    shardingAlgorithms:
+      database_inline:
+        type: INLINE
+        props:
+          algorithm-expression: ds${order_id % 2}
+props:
+  sql-show: true
